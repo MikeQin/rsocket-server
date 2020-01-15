@@ -4,11 +4,11 @@ import com.example.rsocket.model.MarketData;
 import com.example.rsocket.model.MarketDataRequest;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Controller
+@RestController
 public class MarketDataRSocketController {
 
     private final MarketDataRepository marketDataRepository;
