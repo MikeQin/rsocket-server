@@ -7,7 +7,7 @@ RSocket allows you to communicate using following transport protocols:
 
 - TCP
 - WebSocket
-- Argon
+- UDP
 - HTTP/2 Stream
 
 RSocket is a binary protocol for use on byte stream transports. It enables symmetric interaction models via async message passing over a single connection.
