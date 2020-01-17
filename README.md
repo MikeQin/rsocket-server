@@ -96,15 +96,15 @@ public class RSocketClientConfig {
     //********************************************
     // Actual connect and use the requester
     //********************************************
-    
-    //@Profile("tcpClient")
-    //@Bean
+
+    @Qualifier("tcpClient")
+    @Bean
     public RSocketRequester tcpClientRequester(RSocketRequester.Builder rSocketRequesterBuilder) {
         return rSocketRequesterBuilder.connectTcp(host, port)
                 .block(Duration.ofSeconds(5));
     }
 
-    //@Profile("webSocketClient")
+    @Qualifier("webSocketClient")
     @Bean
     public RSocketRequester webSocketClientRequester(RSocketRequester.Builder rSocketRequesterBuilder,
                                                      RSocketStrategies strategies) {
@@ -117,14 +117,14 @@ public class RSocketClientConfig {
     // Deferred to connect and use the requester
     //********************************************
 
-    //@Profile("monoTCPClient")
-    //@Bean
+    @Qualifier("monoTCPClient")
+    @Bean
     public Mono<RSocketRequester> monoTCPClientRequester(RSocketRequester.Builder rSocketRequesterBuilder) {
         return rSocketRequesterBuilder.connectTcp(host, port);
     }
 
-    //@Profile("monoWebSocketClient")
-    //@Bean
+    @Qualifier("monoWebSocketClient")
+    @Bean
     public Mono<RSocketRequester> monoWebSocketClientRequester(RSocketRequester.Builder rSocketRequesterBuilder,
                                                                RSocketStrategies strategies) {
         return RSocketRequester.builder().rsocketStrategies(strategies)
@@ -138,6 +138,47 @@ public class RSocketClientConfig {
 ```yaml
 server:
     port: 8080
+```
+
+### Client RestController
+
+```java
+@RestController
+@Slf4j
+public class MarketDataRestController {
+
+    private final static Random random = new Random();
+    private RSocketRequester rSocketRequester;
+
+    public MarketDataRestController(@Qualifier("webSocketClient") RSocketRequester rSocketRequester) {
+        this.rSocketRequester = rSocketRequester;
+    }
+
+    @GetMapping(value = "/current/{stock}")
+    public Publisher<MarketData> current(@PathVariable("stock") String stock) {
+        return rSocketRequester.route("currentMarketData")
+                .data(new MarketDataRequest(stock))
+                .retrieveMono(MarketData.class);
+    }
+
+    @GetMapping(value = "/feed/{stock}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Publisher<MarketData> feed(@PathVariable("stock") String stock) {
+        return rSocketRequester.route("feedMarketData")
+                .data(new MarketDataRequest(stock))
+                .retrieveFlux(MarketData.class);
+    }
+
+    @GetMapping(value = "/collect")
+    public Publisher<Void> collect() {
+        return rSocketRequester.route("collectMarketData")
+                .data(getMarketData())
+                .send();
+    }
+
+    private MarketData getMarketData() {
+        return new MarketData("X", random.nextInt(10));
+    }
+}
 ```
 
 ### References
