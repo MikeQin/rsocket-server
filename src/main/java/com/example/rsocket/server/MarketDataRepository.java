@@ -1,4 +1,4 @@
-package com.example.rsocket;
+package com.example.rsocket.server;
 
 import com.example.rsocket.model.MarketData;
 import lombok.extern.slf4j.Slf4j;
