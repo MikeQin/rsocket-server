@@ -2,6 +2,7 @@ package com.example.rsocket;
 
 import com.example.rsocket.model.MarketData;
 import com.example.rsocket.model.MarketDataRequest;
+import com.example.rsocket.model.MarketDataError;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
@@ -34,7 +35,8 @@ public class MarketDataRSocketController {
     }
 
     @MessageExceptionHandler
-    public Mono<MarketData> handleException(Exception e) {
-        return Mono.just(MarketData.fromException(e));
+    public Mono<MarketDataError> handleException(Exception e) {
+
+        return Mono.just(new MarketDataError(e));
     }
 }

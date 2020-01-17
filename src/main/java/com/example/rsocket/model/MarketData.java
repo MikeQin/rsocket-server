@@ -10,11 +10,6 @@ import lombok.NoArgsConstructor;
 public class MarketData {
 
     private String stock;
-    private int currentPrice;
+    private int price;
 
-    public static MarketData fromException(Exception e) {
-        MarketData marketData = new MarketData();
-        marketData.setStock(e.getMessage());
-        return marketData;
-    }
 }

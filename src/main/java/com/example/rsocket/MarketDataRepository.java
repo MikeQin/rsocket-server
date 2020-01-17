@@ -14,8 +14,6 @@ import java.util.stream.Stream;
 @Repository
 public class MarketDataRepository {
 
-    private static final int BOUND = 100;
-
     private Random random = new Random();
 
     public Flux<MarketData> getAll(String stock) {
@@ -36,6 +34,17 @@ public class MarketDataRepository {
 
     private MarketData getMarketDataResponse(String stock) {
 
-        return new MarketData(stock, random.nextInt(BOUND));
+        return new MarketData(stock, getRandomInRange(60, 100));
+    }
+
+    /**
+     * @param start - the first number in range
+     * @param end - last or maximum number in range
+     * @return - a random number within given range
+     */
+
+    private int getRandomInRange(int start, int end) {
+        return start + random.nextInt(end - start + 1);
+
     }
 }
